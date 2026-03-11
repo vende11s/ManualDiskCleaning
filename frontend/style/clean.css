@@ -1,0 +1,50 @@
+.progress-bar-container {
+    width: 100%;
+    background-color: #e9ecef;
+    border-radius: 20px;
+    height: 12px; /* Grubość paska */
+    overflow: hidden; /* Ukrywa rogi wypełnienia, które wystają */
+}
+
+/* Wypełnienie paska postępu */
+.progress-bar-fill {
+    height: 100%;
+    background-color: #007bff; /* Główny kolor paska */
+    border-radius: 20px;
+    transition: width 0.4s ease-in-out; /* Płynna animacja przy zmianie szerokości! */
+}
+
+.deleted-item {
+  display: flex;
+}
+
+.file-item {
+  display: flex;
+  position: relative;
+  z-index: 10;
+  user-select: none;
+}
+
+.file-item:hover{
+  background-color: #c1dfff;
+}
+
+.file-item:focus{
+  background-color: #91c6ff;
+}
+
+div{
+    margin-top: 5px;
+}
+
+.file-icon{
+    height: 25px;
+    width: 25px;
+}
+
+.file-title{
+  margin-right: 2%;
+}
+.file-size{
+  margin-right: 2%;
+}

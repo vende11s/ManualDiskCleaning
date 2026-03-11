@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link rel="stylesheet" href="style/map.css">
+   
+</head>
+<body>
+    <button id="back" onclick="window.location.href='select.html'">go back</button>
+
+    <div id="disk-label">SSD (D:) 59/12GB Used</div>
+
+    <div class="progress-bar-container">
+        <div class="progress-bar-fill" style="width: 60%;" id="disk-used-bar"></div>
+    </div>
+
+    <input type="checkbox" id="map_fast" checked>
+    <label for="map_fast">fast mapping (high cpu usage)</label><br>
+    <input type="checkbox" id="map_windows">
+    <label for="map_windows">map windows folder</label><br>
+    <input type="checkbox" id="map_small" checked>
+    <label for="map_small">skip <1MB files</label><br>
+
+    <button id="map_start">map</button>
+
+    <script src="scripts/map.js"></script>
+</body>
+</html>

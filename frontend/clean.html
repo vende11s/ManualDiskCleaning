@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style/clean.css">
+</head>
+<body>
+    <div>Manual Disk Cleaner</div>
+    <button id="go-up">go up</button>
+    <div id="pwd">C:/Users/user/download</div>
+    <button id="open-this">open this directory</button>
+
+    <div class="removed">
+        <div id="removed-label">Removed 16.2/100.3GB</div>
+        <div class="progress-bar-container">
+            <div class="progress-bar-fill" style="width: 60%;" id="removed-bar"></div>
+        </div>
+        <div id="removed-foot">16.1% cleaned</div>
+    </div>
+
+    <div class="last-deleted">
+        <div>Last deleted:</div>
+        <div id="deleted-container">
+            <div class="deleted-item">
+                <img src="resources/folder.png" class="file-icon">
+                <div class="deleted-item-name">C:/aaa.txt</div>
+                <div class="deleted-item-size">12 MB</div>
+            </div>
+
+            <div class="deleted-item">
+                <img src="resources/file.png" class="file-icon">
+                <div class="deleted-item-name">C:/.txt</div>
+                <div class="deleted-item-size">69 GB</div>
+            </div>
+
+            <div class="deleted-item">
+                <img src="resources/folder.png" class="file-icon">
+                <div class="deleted-item-name">C:/yyy.txt</div>
+                <div class="deleted-item-size">12 MB</div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="this-info">2 files in this directory | 58.3GB</div>
+
+    <div class="explorer">
+        <div class="file-item" id="up-item" tabindex="0">
+            <img src="resources/folder.png" class="file-icon">
+            <div class="file-title">..</div>
+        </div>
+        <div id="files-container">
+            <div class="file-item" id="1" tabindex="0">
+                <img src="resources/file.png" class="file-icon">
+                <div class="file-title">hehe.zip</div>
+                <div class="file-size">50GB</div>
+                <div class="file-date">18.05.2006 17:57</div>
+            </div>
+        </div>
+    </div>
+    <script src="scripts/clean.js"></script>
+</body>
+</html>

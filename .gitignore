@@ -1,0 +1,14 @@
+# --- Frontend (Electron/Node) ---
+frontend/node_modules/
+frontend/dist/
+frontend/out/
+
+# --- Backend (C++ Visual Studio) ---
+.vs/
+*.user
+*.aps
+*.suo
+*.db
+getSpace-backend/x64/
+getSpace-backend/Debug/
+getSpace-backend/Release/
