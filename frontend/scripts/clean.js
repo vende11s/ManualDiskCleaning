@@ -1,8 +1,15 @@
 PORT = 42690
 
+let isChangingDir = false;
 async function changeDir(id) {
-    const res = await fetch('http://localhost:' + PORT + '/change_dir/' + id);
-    update();
+    if (isChangingDir) return;
+    isChangingDir = true;
+    try {
+        const res = await fetch('http://localhost:' + PORT + '/change_dir/' + id);
+        update();
+    } finally {
+        setTimeout(() => isChangingDir = false, 250);
+    }
 }
 
 async function remove(id) {
@@ -38,8 +45,12 @@ function update() {
                 <div class="file-date">${file.date_label}</div>
             `;
 
-                item.addEventListener('dblclick', () => {
-                    changeDir(item.id);
+                item.addEventListener('mousedown', (e) => {
+                    if (e.button === 0) {
+                        if (document.activeElement === item) {
+                            changeDir(item.id);
+                        }
+                    }
                 });
                 filesContainer.appendChild(item);
             });
@@ -75,8 +86,13 @@ function update() {
 
 window.onload = () => {
     update();
-    document.getElementById("up-item").addEventListener('dblclick', () => {
-        changeDir("up-item");
+    const upItem = document.getElementById("up-item");
+    upItem.addEventListener('mousedown', (e) => {
+        if (e.button === 0) {
+            if (document.activeElement === upItem) {
+                changeDir("up-item");
+            }
+        }
     });
 
     // Bind the top navigation back button to the same action
