@@ -186,13 +186,8 @@ namespace customFilesystem {
 		char letter;
 		std::string name;
 		std::shared_ptr<File> root = std::make_shared<File>();
-		std::vector<std::shared_ptr<File>> files_container;
+		std::vector<std::vector<std::shared_ptr<File>>> files_container; // trash container to store share pointers so they dont get killed by scope
 		std::mutex m_new_file;
-
-		void addNewFile(std::shared_ptr<File> file) {
-			std::lock_guard<std::mutex> lock(m_new_file);
-			files_container.push_back(file);
-		}
 
 		float BytesToMB(int64_t Bytes) {
 			return Bytes / (1024 * 1024);
@@ -242,7 +237,7 @@ namespace customFilesystem {
 			std::queue<std::pair<std::filesystem::path, std::shared_ptr<File>>> task_queue;
 			task_queue.push({ safe_path, start });
 
-			std::mutex queue_mutex;
+			std::mutex queue_mutex; // note: maybe we can get rid of this mutex by giving each thread its own queue and task stealing?
 			std::condition_variable cv;
 
 			// counters to track active tasks and signal when done
@@ -253,10 +248,15 @@ namespace customFilesystem {
 			uint16_t num_threads = std::thread::hardware_concurrency();
 			if (num_threads == 0) num_threads = 8; // fallback if OS can't detect
 
+			files_container.resize(num_threads); // one private container for each thread so we are mutex free :)
+			for(auto &e : files_container) {
+				e.reserve(10000); // to avoid too many reallocations
+			}
+
 			std::vector<std::thread> workers;
 
 			for (uint16_t i = 0; i < num_threads; i++) {
-				workers.emplace_back([&]() {
+				workers.emplace_back([&, i]() {
 					while (true) {
 						std::pair<std::filesystem::path, std::shared_ptr<File>> task;
 
@@ -281,6 +281,12 @@ namespace customFilesystem {
 							for (auto& file_dir : std::filesystem::directory_iterator(task.first, options)) {
 								try {
 									auto file = mapFile(file_dir, task.second);
+
+									if (file == nullptr) continue; // if file is nullptr, it means we dont have access to it or its a symlink, so we skip it
+
+									// each thread has its own container
+									// no mutex needed
+									files_container[i].push_back(file); // storing pointer so it doesnt get killed by scope
 
 									if (file->isDir() && file->user_have_access) {
 										std::lock_guard<std::mutex> lock(queue_mutex);
@@ -311,7 +317,7 @@ namespace customFilesystem {
 			}
 		}
 
-		void _mapDrive(std::shared_ptr<File> start) {  // bfs algo to map all files
+		void _mapDrive(std::shared_ptr<File> start) {  // bfs to map all files
 			std::queue<std::shared_ptr<File>> Q;
 			Q.push(start);
 
@@ -325,9 +331,14 @@ namespace customFilesystem {
 				for (auto& file_dir : std::filesystem::directory_iterator(safe_path)) {
 					try {
 						auto file = mapFile(file_dir, dir);
+
+						if (file == nullptr) continue; // if file is nullptr, it means we dont have access to it or its a symlink, so we skip it
+
 						if (file->isDir() && file->user_have_access == true) {
 							Q.push(file);
 						}
+						std::lock_guard<std::mutex> lock(m_new_file);
+						files_container[0].push_back(file); // storing shared pointer in the container so it doesnt get killed by scope
 					}
 					catch (...) {} // ignore access denied and symlinks
 				}
@@ -367,12 +378,11 @@ namespace customFilesystem {
 
 		std::shared_ptr<File> mapFile(fs::directory_entry file_dir, std::shared_ptr<File> parent) {
 			if (!fileAccess(file_dir.path()))
-				throw std::runtime_error("can't access file");
+				return nullptr;
 			if(fs::is_symlink(file_dir.path()))
-				throw std::runtime_error("symlink detected");
+				return nullptr;
 
 			auto cfile = std::make_shared<File>();
-			addNewFile(cfile); // adding to container to prevent it from being destroyed when thread ends
 
 			fs::path file(file_dir.path());
 
@@ -430,7 +440,8 @@ namespace customFilesystem {
 		explicit Drive(char letter) {
 			root->type = Troot;
 			root->path = std::string(1, letter) + ":\\";
-			files_container.push_back(root);
+			files_container.resize(1);
+			files_container[0].push_back(root);
 
 			this->letter = letter;
 			this->TotalSize = getDriveSize();
