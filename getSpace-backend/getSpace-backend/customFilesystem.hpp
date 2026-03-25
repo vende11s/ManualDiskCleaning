@@ -134,15 +134,17 @@ namespace customFilesystem {
 
 			child->setParent(thisShared());
 			childs.push_back(child);
-			
-			if (skip_little_files && child->size < 1)  // to make it faster, we dont care about files that are < 1MB
-				return;
+		}
 
-			std::shared_ptr<File> to_actualise = thisShared();
-			size += child->size;
-			while (to_actualise->getType() != Troot) {
-				to_actualise = to_actualise->getParent();
-				to_actualise->size += child->size;
+		void calculateTreeSize() {
+			if (type == Tfile) return;
+			size = 0;
+
+			for (auto& child : childs) {
+				if (child->type == Tdir) {
+					child->calculateTreeSize();
+				}
+				size += child->size;
 			}
 		}
 
@@ -181,8 +183,8 @@ namespace customFilesystem {
 	};
 
 	class Drive {
-		int TotalSize;
-		int UsedSize;
+		int TotalSize{ 0 };
+		int UsedSize{ 0 };
 		char letter;
 		std::string name;
 		std::shared_ptr<File> root = std::make_shared<File>();
@@ -208,6 +210,8 @@ namespace customFilesystem {
 			GetVolumeInformationA(std::string(std::string(1, letter) + ":\\").c_str() , s, 128, NULL, NULL, NULL, NULL, _MAX_PATH + 1);
 			return std::string(s);
 		}
+
+
 
 		bool dirAccess(fs::path p) {
 			try {
@@ -241,8 +245,8 @@ namespace customFilesystem {
 			std::condition_variable cv;
 
 			// counters to track active tasks and signal when done
-			std::atomic<int> active_tasks{ 0 };
-			std::atomic<bool> done{ false };
+			int active_tasks{ 0 }; // no need for atomic since it's only modified under the queue_mutex lock
+			bool done{ false };
 
 			// checking how many hardware threads there are
 			uint16_t num_threads = std::thread::hardware_concurrency();
@@ -260,7 +264,7 @@ namespace customFilesystem {
 					while (true) {
 						std::pair<std::filesystem::path, std::shared_ptr<File>> task;
 
-						{ // manipulating the scope 
+						{ // manipulating the scope to free lock
 
 							// thread waits until there is a task in the queue or all tasks are done
 							std::unique_lock<std::mutex> lock(queue_mutex);
@@ -383,6 +387,13 @@ namespace customFilesystem {
 				return nullptr;
 
 			auto cfile = std::make_shared<File>();
+			if (cfile->type == Tfile) {
+				cfile->size = BytesToMB(file_dir.file_size());
+			}
+
+			if(skip_little_files && cfile->type == Tfile && cfile->size < 1) {
+				return nullptr;
+			}
 
 			fs::path file(file_dir.path());
 
@@ -414,10 +425,6 @@ namespace customFilesystem {
 			ss << ftime;
 			ss >> cfile->last_modified;
 
-			if (cfile->type == Tfile) {
-				cfile->size = BytesToMB(file_dir.file_size());
-			}
-
 			parent->addChild(cfile);
 
 			if (cfile->type == Tdir) {
@@ -433,10 +440,16 @@ namespace customFilesystem {
 					cfile->user_have_access = 0;
 				}
 			}
+
+			if (!cfile->isDir()) {
+				mapped_bytes += file_dir.file_size();
+			}
+
 			return cfile;
 		}
 
 	public:
+		std::atomic<uint64_t> mapped_bytes{ 0 };
 		explicit Drive(char letter) {
 			root->type = Troot;
 			root->path = std::string(1, letter) + ":\\";
@@ -490,6 +503,7 @@ namespace customFilesystem {
 		// maps drive extremely fast with cost of high cpu usage
 		void mapDriveFast() {
 			_mapDriveFast(root);
+			root->calculateTreeSize();
 		}
 
 		void mapDrive() {
@@ -507,6 +521,7 @@ namespace customFilesystem {
 			for (auto& t : threads) {
 				t.join();
 			}
+			root->calculateTreeSize();
 		}
 	};
 

@@ -4,6 +4,7 @@
 #include <string>
 #include <utility>
 #include <chrono>
+#include <atomic>
 
 #include <nlohmann/json.hpp>
 
@@ -85,8 +86,9 @@ namespace http_server {
                 return crow::response(200, "done");
             }
 
-            float progress = (cfs.Drives[drive_mapped].getRoot()->size / cfs.Drives[drive_mapped].getUsedSize()) * 100;
-            std::string progress_label = utils::cutPrecision(utils::MBtoGB(cfs.Drives[drive_mapped].getRoot()->size));
+            float mapped_gb = cfs.Drives[drive_mapped].mapped_bytes.load() / (1024.0f * 1024.0f * 1024.0f);
+            float progress = ((mapped_gb) / cfs.Drives[drive_mapped].getUsedSize()) * 100;
+            std::string progress_label = utils::cutPrecision(mapped_gb);
             progress_label += "/" + utils::cutPrecision(utils::MBtoGB(cfs.Drives[drive_mapped].getUsedSize())) + " GB";
 
             json response;
