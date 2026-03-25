@@ -19,10 +19,10 @@
 
 // size is expressed in megabytes
 namespace customFilesystem {
-	static bool skip_little_files = 1;
-	static bool map_windows_folder = 0;
+	inline bool skip_little_files = 1;
+	inline bool map_windows_folder = 0;
 
-	static bool skip_cursed = 1;
+	inline bool skip_cursed = 1;
 	/*
 		example of cursed dir is Program Files\WindowsApps
 		windows apps is rlly broken
@@ -321,34 +321,6 @@ namespace customFilesystem {
 			}
 		}
 
-		void _mapDrive(std::shared_ptr<File> start) {  // bfs to map all files
-			std::queue<std::shared_ptr<File>> Q;
-			Q.push(start);
-
-			while (!Q.empty()) {
-				std::shared_ptr<File> dir = Q.front();
-				Q.pop();
-
-				std::u8string u8_dir(dir->path.begin(), dir->path.end());
-				std::filesystem::path safe_path(u8_dir);
-
-				for (auto& file_dir : std::filesystem::directory_iterator(safe_path)) {
-					try {
-						auto file = mapFile(file_dir, dir);
-
-						if (file == nullptr) continue; // if file is nullptr, it means we dont have access to it or its a symlink, so we skip it
-
-						if (file->isDir() && file->user_have_access == true) {
-							Q.push(file);
-						}
-						std::lock_guard<std::mutex> lock(m_new_file);
-						files_container[0].push_back(file); // storing shared pointer in the container so it doesnt get killed by scope
-					}
-					catch (...) {} // ignore access denied and symlinks
-				}
-			}
-		}
-
 		bool isCursedSystemDir(const fs::path p) {
 			auto name = p.filename().string(); // just the last folder name
 
@@ -511,20 +483,32 @@ namespace customFilesystem {
 			root->calculateTreeSize();
 		}
 
-		void mapDrive() {
-			std::vector<std::thread> threads;
-			for (auto& file_dir : std::filesystem::directory_iterator(root->path)) {
-				try {
-					auto file = mapFile(file_dir, root);
-					if (file->isDir() && file->user_have_access == true) {
-						threads.push_back(std::thread(&Drive::_mapDrive, this, file));
-					}
-				}
-				catch (...) {}
-			}
+		// maps drive using single thread, slower but low cpu usage.
+		void mapDrive() {  
+			std::queue<std::shared_ptr<File>> Q;
+			Q.push(root);
 
-			for (auto& t : threads) {
-				t.join();
+			while (!Q.empty()) {
+				std::shared_ptr<File> dir = Q.front();
+				Q.pop();
+
+				std::u8string u8_dir(dir->path.begin(), dir->path.end());
+				std::filesystem::path safe_path(u8_dir);
+
+				for (auto& file_dir : std::filesystem::directory_iterator(safe_path)) {
+					try {
+						auto file = mapFile(file_dir, dir);
+
+						if (file == nullptr) continue; // if file is nullptr, it means we dont have access to it or its a symlink, so we skip it
+
+						if (file->isDir() && file->user_have_access == true) {
+							Q.push(file);
+						}
+						std::lock_guard<std::mutex> lock(m_new_file);
+						files_container[0].push_back(file); // storing shared pointer in the container so it doesnt get killed by scope
+					}
+					catch (...) {} // ignore access denied and symlinks
+				}
 			}
 			root->calculateTreeSize();
 		}

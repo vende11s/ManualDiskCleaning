@@ -9,8 +9,14 @@ function startBackend() {
   const backendPath = path.join(__dirname, 'getSpace-backend.exe');
   if (fs.existsSync(backendPath)) {
     try {
-      backendProcess = spawn(backendPath, [], { cwd: __dirname });
+      backendProcess = spawn(backendPath, [], { 
+        cwd: __dirname,
+        stdio: 'ignore' 
+      });
+      
       backendProcess.on('error', (err) => console.error('Backend spawn error:', err));
+      backendProcess.on('exit', (code) => console.log('Backend died, code:', code));
+      
     } catch (e) {
       console.error('Exception starting backend:', e);
     }
