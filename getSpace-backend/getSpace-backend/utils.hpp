@@ -10,39 +10,42 @@
 #include <Windows.h>
 #include <shellapi.h>
 
-// Cross-platform thread-safe localtime
-static std::tm get_local_tm(std::time_t t) {
-	std::tm tm{};
-#ifdef _WIN32
-	localtime_s(&tm, &t);  // Windows
-#else
-	localtime_r(&t, &tm);  // Linux/macOS
-#endif
-	return tm;
-}
-
-std::wstring stringToWString(const std::string& str)
-{
-	int size_needed = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int)str.size(), nullptr, 0);
-	std::wstring wstr(size_needed, 0);
-	MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int)str.size(), &wstr[0], size_needed);
-	return wstr;
-}
-
-// Return current time as HH:MM:SS
-static std::string current_time_hms() {
-	auto now = std::chrono::system_clock::now();
-	std::time_t now_time = std::chrono::system_clock::to_time_t(now);
-	std::tm tm = get_local_tm(now_time);
-
-	char buf[9]; // HH:MM:SS
-	std::strftime(buf, sizeof(buf), "%H:%M:%S", &tm);
-	return std::string(buf);
-}
-
 namespace utils {
+	// helpers for helpers
+	namespace detail{
+			// Cross-platform thread-safe localtime
+	static std::tm get_local_tm(std::time_t t) {
+		std::tm tm{};
+	#ifdef _WIN32
+		localtime_s(&tm, &t);  // Windows
+	#else
+		localtime_r(&t, &tm);  // Linux/macOS
+	#endif
+		return tm;
+	}
+
+	std::wstring stringToWString(const std::string& str)
+	{
+		int size_needed = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int)str.size(), nullptr, 0);
+		std::wstring wstr(size_needed, 0);
+		MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int)str.size(), &wstr[0], size_needed);
+		return wstr;
+	}
+
+	// Return current time as HH:MM:SS
+	static std::string current_time_hms() {
+		auto now = std::chrono::system_clock::now();
+		std::time_t now_time = std::chrono::system_clock::to_time_t(now);
+		std::tm tm = detail::get_local_tm(now_time);
+
+		char buf[9]; // HH:MM:SS
+		std::strftime(buf, sizeof(buf), "%H:%M:%S", &tm);
+		return std::string(buf);
+	}
+	}
+
 	inline void LOG(std::string message) {
-		std::string data = "[" + current_time_hms() + "] " + message + "\n";
+		std::string data = "[" + detail::current_time_hms() + "] " + message + "\n";
 
 		std::clog << data;
 		std::ofstream log("data.log", std::ios_base::app);
@@ -82,7 +85,7 @@ namespace utils {
 	}
 
 	void openInExplorer(const std::string& path) {
-		std::wstring wpath = stringToWString(path);
+		std::wstring wpath = detail::stringToWString(path);
 		ShellExecuteW(NULL, L"open", wpath.c_str(), NULL, NULL, SW_SHOWNORMAL);
 	}
 
