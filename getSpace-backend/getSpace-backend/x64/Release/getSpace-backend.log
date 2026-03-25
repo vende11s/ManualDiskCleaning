@@ -3,10 +3,10 @@
 C:\Users\vende\Desktop\get-space\getSpace-backend\getSpace-backend\customFilesystem.hpp(197,17): warning C4244: 'return': conversion from 'int64_t' to 'float', possible loss of data
   (compiling source file 'getSpace-backend.cpp')
   
-C:\Users\vende\Desktop\get-space\getSpace-backend\getSpace-backend\customFilesystem.hpp(369,34): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\vende\Desktop\get-space\getSpace-backend\getSpace-backend\customFilesystem.hpp(376,34): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
   (compiling source file 'getSpace-backend.cpp')
   
-C:\Users\vende\Desktop\get-space\getSpace-backend\getSpace-backend\customFilesystem.hpp(370,37): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\vende\Desktop\get-space\getSpace-backend\getSpace-backend\customFilesystem.hpp(377,37): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
   (compiling source file 'getSpace-backend.cpp')
   
 C:\Users\vende\vcpkg\installed\x64-windows\include\crow\http_parser_merged.h(587,32): warning C4244: '=': conversion from '__int64' to 'unsigned long', possible loss of data
@@ -142,14 +142,14 @@ C:\Users\vende\Desktop\get-space\getSpace-backend\getSpace-backend\http_server.h
 C:\Users\vende\Desktop\get-space\getSpace-backend\getSpace-backend\http_server.hpp(41,79): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
   (compiling source file 'getSpace-backend.cpp')
   
-C:\Users\vende\Desktop\get-space\getSpace-backend\getSpace-backend\http_server.hpp(90,108): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\vende\Desktop\get-space\getSpace-backend\getSpace-backend\http_server.hpp(90,107): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
   (compiling source file 'getSpace-backend.cpp')
   
 C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\algorithm(3799,24): warning C4244: '=': conversion from 'wint_t' to 'char', possible loss of data
   (compiling source file 'getSpace-backend.cpp')
       C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\algorithm(3799,24):
       the template instantiation context (the oldest one first) is
-          C:\Users\vende\Desktop\get-space\getSpace-backend\getSpace-backend\customFilesystem.hpp(278,9):
+          C:\Users\vende\Desktop\get-space\getSpace-backend\getSpace-backend\customFilesystem.hpp(282,9):
           see reference to function template instantiation '_OutIt std::transform<std::_String_iterator<std::_String_val<std::_Simple_types<_Elem>>>,std::_String_iterator<std::_String_val<std::_Simple_types<_Elem>>>,wint_t(__cdecl *)(wint_t)>(const _InIt,const _InIt,_OutIt,_Fn)' being compiled
           with
           [
@@ -243,9 +243,9 @@ C:\Users\vende\vcpkg\installed\x64-windows\include\crow\parser.h(127,25): warnin
           ]
   
   Generating code
-  9 of 9315 functions (<0.1%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    10 functions had inline decision re-evaluated but remain unchanged
+  260 of 9410 functions ( 2.8%) were compiled, the rest were copied from previous compilation.
+    17 functions were new in current compilation
+    201 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   getSpace-backend.vcxproj -> C:\Users\vende\Desktop\get-space\getSpace-backend\x64\Release\getSpace-backend.exe
   'pwsh.exe' is not recognized as an internal or external command,

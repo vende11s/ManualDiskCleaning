@@ -4,10 +4,13 @@ window.onload = () => {
     gridContainer = document.getElementById("grid-container");
     gridContainer.innerHTML="";
 
-
-    fetch('http://localhost:'+PORT+"/init_disks")
-  .then(response => response.json()) // convert the response to JSON
-  .then(data => {
+    const loadDisks = () => {
+        fetch('http://localhost:'+PORT+"/init_disks")
+        .then(response => {
+            if (!response.ok) throw new Error("API not ready");
+            return response.json();
+        })
+        .then(data => {
     data["disks"].forEach(disk => {
         item = document.createElement("div");
         item.id = disk.id;
@@ -45,6 +48,10 @@ window.onload = () => {
 
   })
   .catch(error => {
-    console.error('Error:', error);
+      console.error('Unable to fetch disk data, retrying in 1s...', error);
+      setTimeout(loadDisks, 1000);
   });
+  };
+
+  loadDisks();
 };

@@ -30,7 +30,7 @@ window.onload = () => {
         data = JSON.parse(text)
         set_bar(data["progress"])
         document.getElementById("map-progress-info").innerHTML = data["progress_label"];
-        document.getElementById("map-progress-pr").innerHTML = data["progress"] + "%";
+        document.getElementById("map-progress-pr").innerHTML = Number(data["progress"]).toFixed(2) + "%";
         
         const elapsedSec = Math.floor((Date.now() - startTime) / 1000);
         document.getElementById("time-elapsed").innerHTML = `Time elapsed: ${elapsedSec}s`;

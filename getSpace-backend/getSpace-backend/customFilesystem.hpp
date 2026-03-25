@@ -1,4 +1,4 @@
-// Copyright 2025 Michal Wierzbinski
+﻿// Copyright 2025 Michal Wierzbinski
 #pragma once
 #define WIN32_LEAN_AND_MEAN
 #include <algorithm>
@@ -235,7 +235,11 @@ namespace customFilesystem {
 
 		void _mapDriveFast(std::shared_ptr<File> start) {
 			std::vector<std::thread> threads;
-			for (auto& file_dir : std::filesystem::directory_iterator(start->path)) {
+
+			std::u8string u8_dir(start->path.begin(), start->path.end());
+			std::filesystem::path safe_path(u8_dir);
+
+			for (auto& file_dir : std::filesystem::directory_iterator(safe_path)) {
 				try {
 					auto file = mapFile(file_dir, start);
 					if (file->isDir() && file->user_have_access == true) {
@@ -321,11 +325,11 @@ namespace customFilesystem {
 			bool undefined_filename = false;
 
 			try {
-    			auto u8_name = file.filename().u8string();
-    			auto u8_full_path = file.u8string();
+				auto u8_name = file.filename().u8string();
+				auto u8_full_path = file.u8string();
 
-    			cfile->filename = std::string(reinterpret_cast<const char*>(u8_name.c_str()));
-    			cfile->path = std::string(reinterpret_cast<const char*>(u8_full_path.c_str()));
+				cfile->filename = std::string(u8_name.begin(), u8_name.end());
+				cfile->path = std::string(u8_full_path.begin(), u8_full_path.end());
 			}
 			catch (...) {
 				cfile->filename = "undefined";
