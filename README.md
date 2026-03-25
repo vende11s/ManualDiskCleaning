@@ -1,12 +1,12 @@
 # ManualDiskCleaning
 
-> **⚠️ Project Status: Alpha**
-> Please note that this project is currently in its Alpha stage. The C++ backend engine is highly optimized, robust, and fully functional. The Electron frontend is currently in an early development phase—it is fully usable for its core purpose, but the UI/UX is basic and waiting to get improved.
+> **⚠️ Project Status: Beta**
+> Please note that this project is currently in its Beta stage. Some things might not work.
 
 ## Overview
 **ManualDiskCleaning** is a high-performance Windows file system analyzer designed to bypass the slow native OS directory loading times. 
 
-Traditionally, checking the size of large directories (like `Program Files`) via Windows Properties can take a significant amount of time. This project solves that bottleneck by mapping an entire drive in approximately 1-2 minutes (depending on the drive and cpu) and providing an instant, responsive overview of your disk space consumption.
+Traditionally, checking the size of large directories (like `Program Files`) via Windows Properties can take a significant amount of time. This project solves that bottleneck by mapping an entire drive in under 1 minute (depending on the drive and cpu) and providing an instant, responsive overview of your disk space consumption.
 
 ## Architecture
 The application utilizes a decoupled architecture to separate heavy computation from the user interface:

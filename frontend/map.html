@@ -1,30 +1,70 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
+    <title>Mapping Settings</title>
     <link rel="stylesheet" href="style/map.css">
-   
+    <link rel="stylesheet" href="style/titlebar.css">
 </head>
+
 <body>
-    <button id="back" onclick="window.location.href='select.html'">go back</button>
+    <div class="app-container">
+        <div class="modal-card">
+            <div class="modal-header">
+                <button id="back" class="nav-btn" onclick="window.location.href='select.html'" title="Go Back">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 18l-6-6 6-6" />
+                    </svg>
+                </button>
+                <h2>Mapping Settings</h2>
+                <div style="width: 32px;"></div> <!-- spacer -->
+            </div>
 
-    <div id="disk-label">SSD (D:) 59/12GB Used</div>
+            <div class="disk-info">
+                <div class="disk-info-header">
+                    <span class="disk-title">Selected Drive</span>
+                    <span id="disk-label" class="disk-stats">SSD (D:) 59/12GB Used</span>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill" style="width: 60%;" id="disk-used-bar"></div>
+                </div>
+            </div>
 
-    <div class="progress-bar-container">
-        <div class="progress-bar-fill" style="width: 60%;" id="disk-used-bar"></div>
+            <div class="settings-group">
+                <div class="setting-item">
+                    <label for="map_fast" class="setting-content">
+                        <span class="setting-title">Fast Mapping</span>
+                        <span class="setting-desc">Increases CPU usage to scan faster.</span>
+                    </label>
+                    <input type="checkbox" id="map_fast" checked class="toggle-checkbox">
+                </div>
+
+                <div class="setting-item">
+                    <label for="map_windows" class="setting-content">
+                        <span class="setting-title">Map Windows Folder</span>
+                        <span class="setting-desc">Include system files in the scan.</span>
+                    </label>
+                    <input type="checkbox" id="map_windows" class="toggle-checkbox">
+                </div>
+
+                <div class="setting-item">
+                    <label for="map_small" class="setting-content">
+                        <span class="setting-title">Skip Tiny Files</span>
+                        <span class="setting-desc">Ignore files smaller than 1MB to save time.</span>
+                    </label>
+                    <input type="checkbox" id="map_small" checked class="toggle-checkbox">
+                </div>
+            </div>
+
+            <button id="map_start" class="action-btn">Start Mapping</button>
+        </div>
     </div>
 
-    <input type="checkbox" id="map_fast" checked>
-    <label for="map_fast">fast mapping (high cpu usage)</label><br>
-    <input type="checkbox" id="map_windows">
-    <label for="map_windows">map windows folder</label><br>
-    <input type="checkbox" id="map_small" checked>
-    <label for="map_small">skip <1MB files</label><br>
-
-    <button id="map_start">map</button>
-
+    <script src="scripts/titlebar.js"></script>
     <script src="scripts/map.js"></script>
 </body>
+
 </html>

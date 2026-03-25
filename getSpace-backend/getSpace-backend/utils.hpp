@@ -55,8 +55,18 @@ namespace utils {
 	}
 
 	// cuts float precision to 1 decimal place
-	std::string cutPrecision(float GB) {
-		return std::format("{:.1f}", GB);
+	std::string cutPrecision(float size) {
+		return std::format("{:.1f}", size);
+	}
+
+	// creates size label for file/folder returning string like "1.5 GB" or "500 MB"
+	std::string createSizeLabel(float size) {
+		if(size>=1024) {
+			return cutPrecision(MBtoGB(size)) + " GB";
+		}
+		else {
+			return cutPrecision(size) + " MB";
+		}
 	}
 
 	bool moveToRecycleBin(const std::string& path)
@@ -69,6 +79,11 @@ namespace utils {
 		fileOp.pFrom = doubleNullPath.c_str();
 		fileOp.fFlags = FOF_ALLOWUNDO; // move to Recycle Bin, show confirmation
 		return SHFileOperationA(&fileOp) == 0;
+	}
+
+	void openInExplorer(const std::string& path) {
+		std::wstring wpath = stringToWString(path);
+		ShellExecuteW(NULL, L"open", wpath.c_str(), NULL, NULL, SW_SHOWNORMAL);
 	}
 
 } // namespace utils

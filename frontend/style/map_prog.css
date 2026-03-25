@@ -1,15 +1,169 @@
-.progress-bar-container {
-    width: 100%;
-    background-color: #e9ecef;
-    border-radius: 20px;
-    height: 12px; /* Grubość paska */
-    overflow: hidden; /* Ukrywa rogi wypełnienia, które wystają */
+:root {
+    --bg-main: #f5f5f7;
+    --bg-card: #ffffff;
+    --text-primary: #1d1d1f;
+    --text-secondary: #86868b;
+    --accent-color: #007aff;
+    --border-color: #d2d2d7;
+    --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.08);
+    --radius-lg: 20px;
+    --radius-md: 12px;
 }
 
-/* Wypełnienie paska postępu */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.app-container {
+    width: 100%;
+    padding: 52px 20px 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.progress-card {
+    width: 100%;
+    max-width: 500px;
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    padding: 36px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.disk-overview {
+    background-color: #fafafc;
+    padding: 16px;
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.disk-info-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: 13px;
+}
+
+.disk-title {
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.disk-stats {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.progress-bar-container {
+    width: 100%;
+    background-color: #e5e5ea;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.progress-bar-container.small {
+    height: 8px;
+}
+
+.progress-bar-container.large {
+    height: 12px;
+    background-color: #e5e5ea;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
 .progress-bar-fill {
     height: 100%;
-    background-color: #007bff; /* Główny kolor paska */
+    background-color: var(--accent-color);
     border-radius: 20px;
-    transition: width 0.4s ease-in-out; /* Płynna animacja przy zmianie szerokości! */
+    transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.animated-stripes {
+    background-image: linear-gradient(45deg,
+            rgba(255, 255, 255, 0.15) 25%,
+            transparent 25%,
+            transparent 50%,
+            rgba(255, 255, 255, 0.15) 50%,
+            rgba(255, 255, 255, 0.15) 75%,
+            transparent 75%,
+            transparent);
+    background-size: 1rem 1rem;
+    animation: progress-stripes 1s linear infinite;
+}
+
+@keyframes progress-stripes {
+    from {
+        background-position: 1rem 0;
+    }
+
+    to {
+        background-position: 0 0;
+    }
+}
+
+.scanning-status {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.spinner {
+    width: 24px;
+    height: 24px;
+    border: 3px solid rgba(0, 122, 255, 0.2);
+    border-top-color: var(--accent-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    flex-shrink: 0;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.scanning-text {
+    flex-grow: 1;
+}
+
+.scanning-text h2 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 4px 0;
+}
+
+.status-detail {
+    font-size: 13px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.time-elapsed {
+    margin-top: 4px;
+    font-variant-numeric: tabular-nums;
+}
+
+.percentage-large {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--accent-color);
+    font-variant-numeric: tabular-nums;
 }

@@ -1,46 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual Disk Cleaner</title>
     <link rel="stylesheet" href="style/clean.css">
+    <link rel="stylesheet" href="style/titlebar.css">
 </head>
+
 <body>
-    <div>Manual Disk Cleaner</div>
-    <button id="go-up">go up</button>
-    <div id="pwd">C:/Users/user/download</div>
-    <button id="open-this">open this directory</button>
-
-    <div class="removed">
-        <div id="removed-label">Removed 16.2/100.3GB</div>
-        <div class="progress-bar-container">
-            <div class="progress-bar-fill" style="width: 60%;" id="removed-bar"></div>
-        </div>
-        <div id="removed-foot">16.1% cleaned</div>
+    <div class="loading-screen" id="loading-screen">
+        <div class="spinner"></div>
     </div>
+    <div class="app-container" id="app-container"
+        style="opacity: 0; pointer-events: none; transition: opacity 0.4s ease;">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>Disk Cleaner</h2>
+            </div>
 
-    <div class="last-deleted">
-        <div>Last deleted:</div>
-        <div id="deleted-container">
+            <div class="sidebar-section removed">
+                <div class="section-title">Storage Process</div>
+                <div class="progress-details">
+                    <div id="removed-label">Removed 0/0GB</div>
+                    <div id="removed-foot" class="progress-percentage">0% cleaned</div>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill" style="width: 0%;" id="removed-bar"></div>
+                </div>
+            </div>
+
+            <div class="sidebar-section last-deleted">
+                <div class="section-title">Last Deleted</div>
+                <div id="deleted-container" class="deleted-list">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
         </div>
-    </div>
 
-    <div id="this-info">2 files in this directory | 58.3GB</div>
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="top-bar">
+                <div class="navigation-controls">
+                    <button id="go-up" class="nav-btn" title="Go Up (Double-click '..')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M15 18l-6-6 6-6" />
+                        </svg>
+                    </button>
+                    <div class="path-display" id="pwd">Loading...</div>
+                </div>
+                <div class="action-controls">
+                    <button id="open-this" class="action-btn">Open this Directory</button>
+                </div>
+            </div>
 
-    <div class="explorer">
-        <div class="file-item" id="up-item" tabindex="0">
-            <img src="resources/folder.png" class="file-icon">
-            <div class="file-title">..</div>
-        </div>
-        <div id="files-container">
-            <div class="file-item" id="1" tabindex="0">
-                <img src="resources/file.png" class="file-icon">
-                <div class="file-title">hehe.zip</div>
-                <div class="file-size">50GB</div>
-                <div class="file-date">18.05.2006 17:57</div>
+            <div class="explorer-header-info">
+                <span id="this-info">Loading info...</span>
+            </div>
+
+            <div class="explorer">
+                <div class="explorer-table-header">
+                    <div class="col-icon"></div>
+                    <div class="col-name">Name</div>
+                    <div class="col-size">Size</div>
+                    <div class="col-date">Date Modified</div>
+                </div>
+                <div class="explorer-content">
+                    <div class="file-item" id="up-item" tabindex="0">
+                        <img src="resources/folder.png" class="file-icon" alt="folder">
+                        <div class="file-title">.. (Go Up)</div>
+                        <div class="file-size"></div>
+                        <div class="file-date"></div>
+                    </div>
+                    <div id="files-container">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+    <script src="scripts/titlebar.js"></script>
     <script src="scripts/clean.js"></script>
 </body>
+
 </html>

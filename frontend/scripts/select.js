@@ -30,6 +30,19 @@ window.onload = () => {
       // append it
       gridContainer.appendChild(item);
     });
+
+    const loadingScreen = document.getElementById("loading-screen");
+    const appContainer = document.getElementById("app-container");
+    if (loadingScreen) {
+        loadingScreen.style.opacity = '0';
+        loadingScreen.style.visibility = 'hidden';
+        setTimeout(() => loadingScreen.remove(), 400);
+    }
+    if (appContainer) {
+        appContainer.style.opacity = '1';
+        appContainer.style.pointerEvents = 'auto';
+    }
+
   })
   .catch(error => {
     console.error('Error:', error);

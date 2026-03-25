@@ -1,0 +1,54 @@
+/* titlebar.css - Makes the app draggable everywhere except interactive elements */
+body {
+  -webkit-app-region: drag;
+}
+
+button, input, a, select, textarea,
+.explorer, .deleted-list, .explorer-content, 
+.action-controls, .navigation-controls, .toggle-checkbox, 
+.progress-card, .grid-container, .grid-item, .modal-card, .file-item {
+  -webkit-app-region: no-drag;
+}
+
+/* Windows 11 style Title Bar Controls */
+.windows-controls {
+  position: absolute;
+  top: 0; 
+  right: 0;
+  display: flex;
+  z-index: 10000;
+  -webkit-app-region: no-drag;
+  background: transparent;
+}
+
+.win-btn {
+  width: 46px; 
+  height: 32px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary, #1d1d1f);
+  transition: background-color 0.1s;
+}
+
+.win-btn:hover {
+  background-color: rgba(0, 0, 0, 0.05); /* Windows light hover */
+}
+
+.win-btn:active {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.win-close:hover {
+  background-color: #e81123; /* Classic Windows close red */
+  color: white;
+}
+
+.win-close:active {
+  background-color: #f1707a;
+  color: white;
+}

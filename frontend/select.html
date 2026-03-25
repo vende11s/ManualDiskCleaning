@@ -1,28 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
+    <title>Select Drive</title>
     <link rel="stylesheet" href="style/select.css">
-
+    <link rel="stylesheet" href="style/titlebar.css">
 </head>
-<body>
-        <script src="scripts/select.js"></script>
-    <div class="grid-wrapper">
-    <div id="grid-container">
 
-    <div class="grid-item" id="C">
-        <div class="progress-info">
-            <span class="label">M2 (C:) - 97,9/476 GB Used</span>
-            <div class="progress-bar-container">
-                <div class="progress-bar-fill" style="width: 75%;"></div>
+<body>
+    <div class="loading-screen" id="loading-screen">
+        <div class="spinner"></div>
+    </div>
+    <div class="app-container" id="app-container" style="opacity: 0; pointer-events: none; transition: opacity 0.4s ease;">
+        <div class="header">
+            <h1>Select Drive to Clean</h1>
+            <p>Choose a disk to scan and free up space.</p>
+            <div class="info-note">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                <span>Note: Removed files are moved to the Trash Bin</span>
+            </div>
+        </div>
+        <div class="grid-wrapper">
+            <div id="grid-container">
+                <!-- Populated by JS -->
             </div>
         </div>
     </div>
-
-
-</div>
-</div>
+    <script src="scripts/titlebar.js"></script>
+    <script src="scripts/select.js"></script>
 </body>
+
 </html>

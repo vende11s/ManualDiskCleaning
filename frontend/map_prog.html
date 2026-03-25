@@ -1,23 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style/map_prog.css">
-    <title></title>
+    <link rel="stylesheet" href="style/titlebar.css">
+    <title>Scanning Progress</title>
 </head>
+
 <body>
-    <div id="disk-label">SSD (D:) - 59.5 / 12.2 GB</div>
-    <div class="progress-bar-container">
-        <div class="progress-bar-fill" style="width: 60%;" id="disk-used-bar"></div>
+    <div class="app-container">
+        <div class="progress-card">
+
+            <div class="disk-overview">
+                <div class="disk-info-header">
+                    <span class="disk-title">Scanning Drive</span>
+                    <span id="disk-label" class="disk-stats">Loading...</span>
+                </div>
+                <div class="progress-bar-container small">
+                    <div class="progress-bar-fill" style="width: 0%;" id="disk-used-bar"></div>
+                </div>
+            </div>
+
+            <div class="scanning-status">
+                <div class="spinner"></div>
+                <div class="scanning-text">
+                    <h2>Analyzing Files...</h2>
+                    <div id="map-progress-info" class="status-detail">Starting scan...</div>
+                    <div id="time-elapsed" class="status-detail time-elapsed">Time elapsed: 0s</div>
+                </div>
+                <div id="map-progress-pr" class="percentage-large">0%</div>
+            </div>
+
+            <div class="progress-bar-container large">
+                <div class="progress-bar-fill animated-stripes" style="width: 0%;" id="map-progress"></div>
+            </div>
+
+        </div>
     </div>
-    <br> <br>
-    <div class="progress-bar-container">
-        <div class="progress-bar-fill" style="width: 0%;" id="map-progress"></div>
-    </div>
-    
-    <div id="map-progress-pr">0%</div>
-    <div id="map-progress-info">mapped 10,2GB / 100,9GB 11 seconds elapsed</div>
+    <script src="scripts/titlebar.js"></script>
     <script src="scripts/map_prog.js"></script>
 </body>
+
 </html>

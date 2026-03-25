@@ -448,6 +448,12 @@ namespace customFilesystem {
 			return found_drives;
 		}
 
+		void runDebugMode() {
+			Drives['C'] = Drive('C');
+			Drives['C'].mapDriveFast();
+			DEBUGwalkthrough('C');
+		}
+
 		// need to map drive first, type folder name to enter it, type exit to exit, type .. to enter parent
 		void DEBUGwalkthrough(char drive) {
 			auto dir = Drives[drive].getRoot();

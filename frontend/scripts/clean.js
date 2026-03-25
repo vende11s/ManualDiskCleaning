@@ -58,6 +58,18 @@ function update() {
                     deletedContainer.appendChild(deletedItem);
                 });
             }
+
+            const loadingScreen = document.getElementById("loading-screen");
+            const appContainer = document.getElementById("app-container");
+            if (loadingScreen) {
+                loadingScreen.style.opacity = '0';
+                loadingScreen.style.visibility = 'hidden';
+                setTimeout(() => loadingScreen.remove(), 400);
+            }
+            if (appContainer) {
+                appContainer.style.opacity = '1';
+                appContainer.style.pointerEvents = 'auto';
+            }
         });
 }
 
@@ -66,6 +78,25 @@ window.onload = () => {
     document.getElementById("up-item").addEventListener('dblclick', () => {
         changeDir("up-item");
     });
+
+    // Bind the top navigation back button to the same action
+    const goUpBtn = document.getElementById("go-up");
+    if (goUpBtn) {
+        goUpBtn.addEventListener('click', () => {
+            changeDir("up-item");
+        });
+    }
+
+    const openThisBtn = document.getElementById("open-this");
+    if (openThisBtn) {
+        openThisBtn.addEventListener('click', async () => {
+            try {
+                await fetch('http://localhost:' + PORT + '/open');
+            } catch (err) {
+                console.error("Failed to open directory:", err);
+            }
+        });
+    }
 }
 
 document.addEventListener('keydown', (event) => {
@@ -74,5 +105,19 @@ document.addEventListener('keydown', (event) => {
         if (focused) {
             remove(focused.id);
         }
+    }
+});
+
+// Capture mouse back button
+document.addEventListener('mousedown', (event) => {
+    if (event.button === 3 || event.button === 4) {
+        event.preventDefault();
+    }
+});
+
+document.addEventListener('mouseup', (event) => {
+    if (event.button === 3) { // 3 is the standard "Browser Back" mouse button
+        event.preventDefault();
+        changeDir("up-item");
     }
 });
