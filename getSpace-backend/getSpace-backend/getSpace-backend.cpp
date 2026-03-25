@@ -6,11 +6,13 @@
 #include "utils.hpp"
 #include "http_server.hpp"
 
+#ifndef _DEBUG
+	#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
+#endif
+
 namespace cfs = customFilesystem;
 
 int main() {
-	// hide terminal window
-	
 	utils::LOG("getSpace backend started, initializing cfs");
 	// init custom filesystem with all drives
 	cfs::customFilesystem cfs;

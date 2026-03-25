@@ -71,7 +71,7 @@ namespace http_server {
             cfs::skip_little_files = skip_small;
             cfs::map_windows_folder = windows;
 
-            utils::LOG("mappinasdg drive" + drive_letter);
+            utils::LOG("mapping drive " + drive_letter);
             map_drive(cfs, drive_letter, fast);
             return crow::response(200, "Drive mapped");
             });
@@ -107,6 +107,7 @@ namespace http_server {
         std::shared_ptr<cfs::File> current_dir;
 
         CROW_ROUTE(app, "/get_interface_data")([&cfs, &drive_mapped, &current_dir, &removed_files, &freed_space, &space_to_free]() {
+            utils::LOG("HTTP: /get_interface_data called");
             if (drive_mapped == 0) {
                 return crow::response(400, "No drive mapped");
             }
@@ -149,6 +150,7 @@ namespace http_server {
             });
 
         CROW_ROUTE(app, "/change_dir/<string>")([&cfs, &drive_mapped, &current_dir](std::string id) {
+            utils::LOG("HTTP: /change_dir/" + id + " called");
             if (drive_mapped == 0) {
                 return crow::response(400, "No drive mapped");
             }
@@ -174,6 +176,7 @@ namespace http_server {
             });
 
         CROW_ROUTE(app, "/remove/<string>")([&cfs, &drive_mapped, &current_dir, &removed_files, &freed_space](std::string id) {
+            utils::LOG("HTTP: /remove/" + id + " called");
             if (drive_mapped == 0) {
                 return crow::response(400, "No drive mapped");
             }
@@ -205,6 +208,7 @@ namespace http_server {
         });
 
         CROW_ROUTE(app, "/open")([&current_dir]() {
+            utils::LOG("HTTP: /open/ called");
             utils::openInExplorer(current_dir->getPath());
             return crow::response(200, "Opened in explorer");
         });

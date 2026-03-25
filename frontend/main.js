@@ -1,5 +1,21 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
+const { spawn } = require('child_process');
+const fs = require('fs');
+
+let backendProcess = null;
+
+function startBackend() {
+  const backendPath = path.join(__dirname, 'getSpace-backend.exe');
+  if (fs.existsSync(backendPath)) {
+    try {
+      backendProcess = spawn(backendPath, [], { cwd: __dirname });
+      backendProcess.on('error', (err) => console.error('Backend spawn error:', err));
+    } catch (e) {
+      console.error('Exception starting backend:', e);
+    }
+  }
+}
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -16,6 +32,7 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
+  startBackend();
   createWindow();
 
   ipcMain.on('window-minimize', (event) => {
@@ -42,6 +59,16 @@ app.whenReady().then(() => {
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
+});
+
+app.on('will-quit', () => {
+  if (backendProcess) {
+    try {
+      backendProcess.kill();
+    } catch (e) {
+      console.error('Error killing backend:', e);
+    }
+  }
 });
 
 app.on('window-all-closed', () => {

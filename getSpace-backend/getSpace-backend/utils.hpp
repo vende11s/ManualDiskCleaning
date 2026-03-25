@@ -32,20 +32,20 @@ namespace utils {
 		return wstr;
 	}
 
-	// Return current time as HH:MM:SS
-	static std::string current_time_hms() {
+	// Return current date and time as YYYY-MM-DD HH:MM:SS
+	static std::string current_datetime() {
 		auto now = std::chrono::system_clock::now();
 		std::time_t now_time = std::chrono::system_clock::to_time_t(now);
 		std::tm tm = detail::get_local_tm(now_time);
 
-		char buf[9]; // HH:MM:SS
-		std::strftime(buf, sizeof(buf), "%H:%M:%S", &tm);
+		char buf[20]; // 19 znaków na format + 1 na '\0'
+		std::strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", &tm);
 		return std::string(buf);
 	}
 	}
 
 	inline void LOG(std::string message) {
-		std::string data = "[" + detail::current_time_hms() + "] " + message + "\n";
+		std::string data = "[" + detail::current_datetime() + "] " + message + "\n";
 
 		std::clog << data;
 		std::ofstream log("data.log", std::ios_base::app);
@@ -67,7 +67,7 @@ namespace utils {
 		if(size>=1024) {
 			return cutPrecision(MBtoGB(size)) + " GB";
 		}
-		else {
+		else { 
 			return cutPrecision(size) + " MB";
 		}
 	}

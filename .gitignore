@@ -11,8 +11,8 @@ frontend/out/
 *.aps
 *.suo
 *.db
-getSpace-backend/x64/
-getSpace-backend/getSpace-backend/x64/
-getSpace-backend/Debug/
-getSpace-backend/Release/
+x64/
 getSpace-backend/getSpace-backend/data.log
+build/
+data.log
+getSpace-backend.exe
