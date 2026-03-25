@@ -9,14 +9,14 @@ function startBackend() {
   const backendPath = path.join(__dirname, 'getSpace-backend.exe');
   if (fs.existsSync(backendPath)) {
     try {
-      backendProcess = spawn(backendPath, [], { 
+      backendProcess = spawn(backendPath, [], {
         cwd: __dirname,
-        stdio: 'ignore' 
+        stdio: 'ignore'
       });
-      
+
       backendProcess.on('error', (err) => console.error('Backend spawn error:', err));
       backendProcess.on('exit', (code) => console.log('Backend died, code:', code));
-      
+
     } catch (e) {
       console.error('Exception starting backend:', e);
     }
@@ -27,6 +27,7 @@ function createWindow() {
   const win = new BrowserWindow({
     width: 1000,
     height: 650,
+    icon: path.join(__dirname, 'resources/logo.ico'),
     frame: false,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
