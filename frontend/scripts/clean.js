@@ -17,22 +17,55 @@ async function remove(id) {
     update();
 }
 
+let currentOffset = 0;
+let isLoadingMore = false;
+let hasMoreFiles = true;
+
 function update() {
-    fetch('http://localhost:' + PORT + '/get_interface_data')
+    currentOffset = 0;
+    hasMoreFiles = true;
+    let filesContainer = document.getElementById("files-container");
+    if (filesContainer) filesContainer.innerHTML = "";
+    loadMoreFiles();
+}
+
+function loadMoreFiles() {
+    if (isLoadingMore || !hasMoreFiles) return;
+    isLoadingMore = true;
+
+    const bottomSpinner = document.getElementById("loading-more-spinner");
+    if (bottomSpinner) bottomSpinner.style.display = "flex";
+
+    fetch('http://localhost:' + PORT + '/get_interface_data/' + currentOffset)
         .then(response => response.json())
         .then(res => {
-            document.getElementById("pwd").innerHTML = res["current_path"];
-            document.getElementById("removed-label").innerHTML = "Removed " + res["removed_label"];
-            document.getElementById("this-info").innerHTML = res["dir_info"];
+            if (currentOffset === 0) {
+                document.getElementById("pwd").innerHTML = res["current_path"];
+                document.getElementById("removed-label").innerHTML = "Removed " + res["removed_label"];
+                document.getElementById("this-info").innerHTML = res["dir_info"];
 
-            removed_percent = res["removed_percent"]
-            document.getElementById("removed-bar").style = `width:${removed_percent}%;`;
-            document.getElementById("removed-foot").innerHTML = removed_percent + "%" + " cleaned";
+                removed_percent = res["removed_percent"]
+                document.getElementById("removed-bar").style = `width:${removed_percent}%;`;
+                document.getElementById("removed-foot").innerHTML = removed_percent + "%" + " cleaned";
+
+                let deletedContainer = document.getElementById("deleted-container");
+                if (res["last_removed"]) {
+                    deletedContainer.innerHTML = "";
+                    res["last_removed"].forEach(item => {
+                        let deletedItem = document.createElement("div");
+                        deletedItem.className = "deleted-item";
+                        deletedItem.innerHTML = `
+                        <img src="resources/${item.type}.png" class="file-icon">
+                        <div class="deleted-item-name">${item.path}  </div>
+                        <div class="deleted-item-size">  ${item.size_label}</div>
+                    `;
+                        deletedContainer.appendChild(deletedItem);
+                    });
+                }
+            }
 
             let filesContainer = document.getElementById("files-container");
-            filesContainer.innerHTML = ""
             res["files"].forEach(file => {
-                console.log(file)
                 let item = document.createElement("div");
                 item.id = file.id;
                 item.className = "file-item";
@@ -55,37 +88,45 @@ function update() {
                 filesContainer.appendChild(item);
             });
 
-            let deletedContainer = document.getElementById("deleted-container");
-            if (res["last_removed"]) {
-                deletedContainer.innerHTML = "";
-                res["last_removed"].forEach(item => {
-                    let deletedItem = document.createElement("div");
-                    deletedItem.className = "deleted-item";
-                    deletedItem.innerHTML = `
-                    <img src="resources/${item.type}.png" class="file-icon">
-                    <div class="deleted-item-name">${item.path}  </div>
-                    <div class="deleted-item-size">  ${item.size_label}</div>
-                `;
-                    deletedContainer.appendChild(deletedItem);
-                });
+            currentOffset += res.files.length;
+            if (currentOffset >= res.dir_size || res.files.length === 0) {
+                hasMoreFiles = false;
             }
 
-            const loadingScreen = document.getElementById("loading-screen");
-            const appContainer = document.getElementById("app-container");
-            if (loadingScreen) {
-                loadingScreen.style.opacity = '0';
-                loadingScreen.style.visibility = 'hidden';
-                setTimeout(() => loadingScreen.remove(), 400);
+            if (currentOffset === res.files.length) {
+                const loadingScreen = document.getElementById("loading-screen");
+                const appContainer = document.getElementById("app-container");
+                if (loadingScreen) {
+                    loadingScreen.style.opacity = '0';
+                    loadingScreen.style.visibility = 'hidden';
+                    setTimeout(() => loadingScreen.remove(), 400);
+                }
+                if (appContainer) {
+                    appContainer.style.opacity = '1';
+                    appContainer.style.pointerEvents = 'auto';
+                }
             }
-            if (appContainer) {
-                appContainer.style.opacity = '1';
-                appContainer.style.pointerEvents = 'auto';
-            }
+            
+            if (bottomSpinner) bottomSpinner.style.display = "none";
+            isLoadingMore = false;
+        }).catch(err => {
+            console.error(err);
+            if (bottomSpinner) bottomSpinner.style.display = "none";
+            isLoadingMore = false;
         });
 }
 
 window.onload = () => {
     update();
+
+    const explorerContent = document.querySelector('.explorer-content');
+    if (explorerContent) {
+        explorerContent.addEventListener('scroll', () => {
+            if (explorerContent.scrollHeight - explorerContent.scrollTop - explorerContent.clientHeight < 1500) {
+                loadMoreFiles();
+            }
+        });
+    }
     const upItem = document.getElementById("up-item");
     upItem.addEventListener('mousedown', (e) => {
         if (e.button === 0) {

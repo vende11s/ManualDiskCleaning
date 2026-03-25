@@ -54,6 +54,13 @@ body {
     transition: opacity 0.4s ease, visibility 0.4s;
 }
 
+.bottom-spinner {
+    display: flex;
+    justify-content: center;
+    padding: 24px 0;
+    width: 100%;
+}
+
 .spinner {
     width: 32px;
     height: 32px;

@@ -106,7 +106,7 @@ namespace http_server {
 
         std::shared_ptr<cfs::File> current_dir;
 
-        CROW_ROUTE(app, "/get_interface_data")([&cfs, &drive_mapped, &current_dir, &removed_files, &freed_space, &space_to_free]() {
+        CROW_ROUTE(app, "/get_interface_data/<int>")([&cfs, &drive_mapped, &current_dir, &removed_files, &freed_space, &space_to_free](int offset) {
             utils::LOG("HTTP: /get_interface_data called");
             if (drive_mapped == 0) {
                 return crow::response(400, "No drive mapped");
@@ -131,13 +131,14 @@ namespace http_server {
                     {"type", removed_files[i].type} });
             }
 
+            response["dir_size"] = current_dir->getChilds().size();
             response["dir_info"] = std::to_string(current_dir->getChilds().size()) +
                 " files in this directory | " + utils::cutPrecision(utils::MBtoGB(current_dir->size)) + "GB";
             response["files"] = json::array();
 
             current_dir->sortChilds();
             auto childs = current_dir->getChilds();
-            for (int i = 0; i < childs.size(); i++) {
+            for (int i = offset; i < offset + 500 && i < childs.size(); i++) {
                 response["files"].push_back({
                     {"id", std::to_string(i)},
                     {"name", childs[i]->filename},
