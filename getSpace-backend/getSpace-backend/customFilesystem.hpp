@@ -321,8 +321,11 @@ namespace customFilesystem {
 			bool undefined_filename = false;
 
 			try {
-				cfile->filename = file.filename().string();
-				cfile->path = file.string();
+    			auto u8_name = file.filename().u8string();
+    			auto u8_full_path = file.u8string();
+
+    			cfile->filename = std::string(reinterpret_cast<const char*>(u8_name.c_str()));
+    			cfile->path = std::string(reinterpret_cast<const char*>(u8_full_path.c_str()));
 			}
 			catch (...) {
 				cfile->filename = "undefined";
