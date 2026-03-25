@@ -445,11 +445,15 @@ namespace customFilesystem {
 				mapped_bytes += file_dir.file_size();
 			}
 
+			items_mapped++;
+
 			return cfile;
 		}
 
 	public:
 		std::atomic<uint64_t> mapped_bytes{ 0 };
+		std::atomic<uint64_t> items_mapped{ 0 };
+
 		explicit Drive(char letter) {
 			root->type = Troot;
 			root->path = std::string(1, letter) + ":\\";

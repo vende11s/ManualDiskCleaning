@@ -86,14 +86,16 @@ namespace http_server {
                 return crow::response(200, "done");
             }
 
-            float mapped_gb = cfs.Drives[drive_mapped].mapped_bytes.load() / (1024.0f * 1024.0f * 1024.0f);
-            float progress = ((mapped_gb) / cfs.Drives[drive_mapped].getUsedSize()) * 100;
+            float mapped_gb = min(cfs.Drives[drive_mapped].mapped_bytes.load() / (1024.0f * 1024.0f * 1024.0f), cfs.Drives[drive_mapped].getUsedSize() / 1024.0f);
+            float progress = ((mapped_gb * 1024.0f) / cfs.Drives[drive_mapped].getUsedSize()) * 100;
             std::string progress_label = utils::cutPrecision(mapped_gb);
             progress_label += "/" + utils::cutPrecision(utils::MBtoGB(cfs.Drives[drive_mapped].getUsedSize())) + " GB";
 
             json response;
             response["progress"] = std::to_string(progress);
-            response["progress_label"] = "mapped " + progress_label;
+            response["progress_label"] = "Mapped " + progress_label;
+            response["items_mapped"] = cfs.Drives[drive_mapped].items_mapped.load();
+
             return crow::response(response.dump());
             });
 
