@@ -316,7 +316,7 @@ namespace customFilesystem {
 
 			fs::path file(file_dir.path());
 
-			if (fs::is_directory(file)) {
+			if (file_dir.is_directory()) {
 				cfile->type = Tdir;
 			} else {
 				cfile->type = Tfile;
@@ -338,14 +338,14 @@ namespace customFilesystem {
 			}
 
 			// get last modified time
-			fs::file_time_type ftime = fs::last_write_time(file);
+			fs::file_time_type ftime = file_dir.last_write_time();
 			std::stringstream ss;
 
 			ss << ftime;
 			ss >> cfile->last_modified;
 
 			if (cfile->type == Tfile) {
-				cfile->size = BytesToMB(fs::file_size(file));
+				cfile->size = BytesToMB(file_dir.file_size());
 			}
 
 			parent->addChild(cfile);
