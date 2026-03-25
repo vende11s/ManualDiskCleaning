@@ -18,6 +18,28 @@ The application utilizes a decoupled architecture to separate heavy computation 
 * **Instant Navigation**: Browse through your heaviest folders with zero loading times once the initial scan is complete.
 * **Safe Deletion**: Files deleted through the application are safely moved to the Windows Recycle Bin, preventing accidental permanent data loss.
 
+## UI
+
+<table align="center">
+  <tr>
+    <td valign="top" style="padding: 5px; border: none;">
+      <img src="https://github.com/user-attachments/assets/0cc8eb54-291b-4c03-be0f-0e7a727724a6" alt="image 1" width="230" />
+    </td>
+    <td valign="top" style="padding: 5px; border: none;">
+      <img src="https://github.com/user-attachments/assets/a061c5c2-9031-443c-ae73-42e582b4c0b2" alt="image 2" width="230" />
+    </td>
+    <td valign="top" style="padding: 5px; border: none;">
+      <img src="https://github.com/user-attachments/assets/0b88234a-76b7-419b-a54c-e4bd9fbe89e7" alt="image 3" width="230" />
+    </td>
+    <td valign="top" style="padding: 5px; border: none;">
+      <img src="https://github.com/user-attachments/assets/5f5ff1e6-ada7-4668-b58d-2f0b83c9020a" alt="image 4" width="230" />
+    </td>
+  </tr>
+</table>
+
+
+
+
 ## Getting Started
 
 ### Prerequisites & Installation
