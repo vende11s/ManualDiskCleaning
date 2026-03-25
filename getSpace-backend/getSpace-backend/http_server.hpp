@@ -127,7 +127,7 @@ namespace http_server {
             response["removed_percent"] = utils::cutPrecision((freed_space / space_to_free) * 100.0f);
             response["last_removed"] = json::array();
 
-            for (int i = 0; i < removed_files.size(); i++) {
+            for (int i = removed_files.size()-1; i >= 0; i--) {
                 response["last_removed"].push_back({
                     {"id", std::to_string(i)},
                     {"path", removed_files[i].path},

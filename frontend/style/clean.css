@@ -138,12 +138,20 @@ body {
 }
 
 /* Deleted List */
+.sidebar-section.last-deleted {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
 .deleted-list {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    max-height: 480px;
     overflow-y: auto;
+    flex-grow: 1;
+    min-height: 0;
 }
 
 .deleted-item {

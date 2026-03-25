@@ -56,7 +56,7 @@ function loadMoreFiles() {
                         deletedItem.className = "deleted-item";
                         deletedItem.innerHTML = `
                         <img src="resources/${item.type}.png" class="file-icon">
-                        <div class="deleted-item-name">${item.path}  </div>
+                        <div class="deleted-item-name" title="${item.path}">${item.path}  </div>
                         <div class="deleted-item-size">  ${item.size_label}</div>
                     `;
                         deletedContainer.appendChild(deletedItem);

@@ -387,6 +387,14 @@ namespace customFilesystem {
 				return nullptr;
 
 			auto cfile = std::make_shared<File>();
+
+			if (file_dir.is_directory()) {
+				cfile->type = Tdir;
+			}
+			else {
+				cfile->type = Tfile;
+			}
+
 			if (cfile->type == Tfile) {
 				cfile->size = BytesToMB(file_dir.file_size());
 			}
@@ -397,14 +405,7 @@ namespace customFilesystem {
 
 			fs::path file(file_dir.path());
 
-			if (file_dir.is_directory()) {
-				cfile->type = Tdir;
-			} else {
-				cfile->type = Tfile;
-			}
-
 			bool undefined_filename = false;
-
 			try {
 				auto u8_name = file.filename().u8string();
 				auto u8_full_path = file.u8string();
