@@ -12,6 +12,8 @@
 #include <string>
 #include <thread>
 #include <vector>
+#include <condition_variable>
+#include <atomic>
 
 #include <Windows.h>
 
@@ -188,9 +190,8 @@ namespace customFilesystem {
 		std::mutex m_new_file;
 
 		void addNewFile(std::shared_ptr<File> file) {
-			m_new_file.lock();
+			std::lock_guard<std::mutex> lock(m_new_file);
 			files_container.push_back(file);
-			m_new_file.unlock();
 		}
 
 		float BytesToMB(int64_t Bytes) {
@@ -234,23 +235,79 @@ namespace customFilesystem {
 		}
 
 		void _mapDriveFast(std::shared_ptr<File> start) {
-			std::vector<std::thread> threads;
-
 			std::u8string u8_dir(start->path.begin(), start->path.end());
 			std::filesystem::path safe_path(u8_dir);
 
-			for (auto& file_dir : std::filesystem::directory_iterator(safe_path)) {
-				try {
-					auto file = mapFile(file_dir, start);
-					if (file->isDir() && file->user_have_access == true) {
-						threads.push_back(std::thread(&Drive::_mapDriveFast, this, file));
+			// task queue to store directories that need to be processed, each task is a pair of (path, corresponding File object)
+			std::queue<std::pair<std::filesystem::path, std::shared_ptr<File>>> task_queue;
+			task_queue.push({ safe_path, start });
+
+			std::mutex queue_mutex;
+			std::condition_variable cv;
+
+			// counters to track active tasks and signal when done
+			std::atomic<int> active_tasks{ 0 };
+			std::atomic<bool> done{ false };
+
+			// checking how many hardware threads there are
+			uint16_t num_threads = std::thread::hardware_concurrency();
+			if (num_threads == 0) num_threads = 8; // fallback if OS can't detect
+
+			std::vector<std::thread> workers;
+
+			for (uint16_t i = 0; i < num_threads; i++) {
+				workers.emplace_back([&]() {
+					while (true) {
+						std::pair<std::filesystem::path, std::shared_ptr<File>> task;
+
+						{ // manipulating the scope 
+
+							// thread waits until there is a task in the queue or all tasks are done
+							std::unique_lock<std::mutex> lock(queue_mutex);
+							cv.wait(lock, [&]() {
+								return !task_queue.empty() || (done && active_tasks == 0);
+							});
+
+							if (done && task_queue.empty() && active_tasks == 0) return;
+
+							task = task_queue.front();
+							task_queue.pop();
+							active_tasks++;
+						}
+
+						// mapping only the current directory and adding subdirectories to the queue
+						try {
+							auto options = std::filesystem::directory_options::skip_permission_denied;
+							for (auto& file_dir : std::filesystem::directory_iterator(task.first, options)) {
+								try {
+									auto file = mapFile(file_dir, task.second);
+
+									if (file->isDir() && file->user_have_access) {
+										std::lock_guard<std::mutex> lock(queue_mutex);
+										task_queue.push({ file_dir.path(), file });
+										cv.notify_one(); // waking one thread to process the new task
+									}
+								}
+								catch (...) {}
+							}
+						}
+						catch (...) {}
+
+						{
+							std::lock_guard<std::mutex> lock(queue_mutex);
+							active_tasks--;
+							if (task_queue.empty() && active_tasks == 0) {
+								done = true;
+								cv.notify_all(); // waking all threads to finish
+							}
+						}
 					}
-				}
-				catch (...) {} // ignore access denied and symlinks
+					});
 			}
 
-			for (auto& t : threads) {
-				t.join();
+			// waitig for all threads to finish
+			for (auto& t : workers) {
+				if (t.joinable()) t.join();
 			}
 		}
 
@@ -262,7 +319,10 @@ namespace customFilesystem {
 				std::shared_ptr<File> dir = Q.front();
 				Q.pop();
 
-				for (auto& file_dir : std::filesystem::directory_iterator(dir->path)) {
+				std::u8string u8_dir(dir->path.begin(), dir->path.end());
+				std::filesystem::path safe_path(u8_dir);
+
+				for (auto& file_dir : std::filesystem::directory_iterator(safe_path)) {
 					try {
 						auto file = mapFile(file_dir, dir);
 						if (file->isDir() && file->user_have_access == true) {
@@ -312,7 +372,7 @@ namespace customFilesystem {
 				throw std::runtime_error("symlink detected");
 
 			auto cfile = std::make_shared<File>();
-			addNewFile(cfile);
+			addNewFile(cfile); // adding to container to prevent it from being destroyed when thread ends
 
 			fs::path file(file_dir.path());
 
