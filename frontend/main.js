@@ -6,11 +6,17 @@ const fs = require('fs');
 let backendProcess = null;
 
 function startBackend() {
-  const backendPath = path.join(__dirname, 'getSpace-backend.exe');
+  const backendPath = app.isPackaged
+    ? path.join(process.resourcesPath, '..', 'getSpace-backend.exe') 
+    : path.join(__dirname, 'getSpace-backend.exe');
+
+  // We need the actual directory where the .exe sits to set it as CWD
+  const backendDir = path.dirname(backendPath);
+
   if (fs.existsSync(backendPath)) {
     try {
       backendProcess = spawn(backendPath, [], {
-        cwd: __dirname,
+        cwd: backendDir, // FIX: Use the actual folder, not __dirname
         stdio: 'ignore'
       });
 

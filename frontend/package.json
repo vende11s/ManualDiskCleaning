@@ -1,6 +1,9 @@
 {
   "name": "get-space-front",
-  "version": "0.1.0",
+  "productName": "Get Space",
+  "version": "1.0.0",
+  "description": "A high-performance Windows file system analyzer built for speed.",
+  "author": "Michał Wierzbiński github.com/vende11s",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
@@ -8,9 +11,30 @@
   },
   "build": {
     "appId": "com.vende11s.getspace",
+    "compression": "normal",
+    "directories": {
+      "output": "dist"
+    },
     "win": {
-      "target": "portable"
-    }
+      "target": "nsis",
+      "icon": "resources/logo.ico",
+      "artifactName": "${productName}-Setup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": "always",
+      "createStartMenuShortcut": true,
+      "shortcutName": "Get Space",
+      "uninstallDisplayName": "Get Space (Uninstall)"
+    },
+    "extraFiles": [
+      {
+        "from": "getSpace-backend.exe",
+        "to": ".",
+        "filter": ["**/*"]
+      }
+    ]
   },
   "devDependencies": {
     "electron": "^41.0.0",
