@@ -1,10 +1,11 @@
-// Copyright (c) 2025 Michal Wierzbinski
+// Copyright (c) 2025-2026 Michal Wierzbinski
 #include <iostream>
 #include <vector>
 
-#include "customFilesystem.hpp"
-#include "utils.hpp"
-#include "http_server.hpp"
+#include "src/customFilesystem/customFilesystem.hpp"
+#include "src/http_server.hpp"
+
+import Utils;
 
 #ifndef _DEBUG
 	#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")

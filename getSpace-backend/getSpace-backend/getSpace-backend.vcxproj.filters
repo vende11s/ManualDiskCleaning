@@ -15,18 +15,36 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="getSpace-backend.cpp">
+    <ClCompile Include="src\customFilesystem\customFilesystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\customFilesystem\Drive.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\customFilesystem\File.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utils.cppm">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="customFilesystem.hpp">
+    <ClInclude Include="src\http_server.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="utils.hpp">
+    <ClInclude Include="src\customFilesystem\config.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="http_server.hpp">
+    <ClInclude Include="src\customFilesystem\customFilesystem.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\customFilesystem\Drive.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\customFilesystem\File.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

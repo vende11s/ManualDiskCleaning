@@ -122,9 +122,10 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpp23</LanguageStandard>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <AdditionalIncludeDirectories>$(ProjectDir)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -134,12 +135,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="getSpace-backend.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="customFilesystem.hpp" />
-    <ClInclude Include="http_server.hpp" />
-    <ClInclude Include="utils.hpp" />
+    <ClCompile Include="src\customFilesystem\customFilesystem.cpp" />
+    <ClCompile Include="src\customFilesystem\Drive.cpp" />
+    <ClCompile Include="src\customFilesystem\File.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\utils.cppm" />
+    <ClInclude Include="src\customFilesystem\config.hpp" />
+    <ClInclude Include="src\customFilesystem\customFilesystem.hpp" />
+    <ClInclude Include="src\customFilesystem\Drive.hpp" />
+    <ClInclude Include="src\customFilesystem\File.hpp" />
+    <ClInclude Include="src\http_server.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

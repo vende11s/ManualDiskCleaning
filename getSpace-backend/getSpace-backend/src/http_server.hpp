@@ -1,34 +1,40 @@
+// Copyright (c) 2025-2026 Michal Wierzbinski
 #pragma once
-#include <crow.h>
 
 #include <string>
 #include <utility>
 #include <chrono>
 #include <atomic>
+#include <algorithm>
+#include <vector>
+#include <memory>
 
 #include <nlohmann/json.hpp>
+#include <crow.h>
 
-#include "utils.hpp"
-#include "customFilesystem.hpp"
+#include "src/customFilesystem/customFilesystem.hpp"
+
+import Utils;
 
 using json = nlohmann::json;
 namespace cfs = customFilesystem;
 
 namespace http_server {
-	bool done_mapping = false;
-    void map_drive(cfs::customFilesystem& cfs, char letter, bool fast) {
-        if (fast) {
-            cfs.Drives[letter].mapDriveFast();
+    namespace {
+        bool done_mapping = false;
+        void map_drive(cfs::customFilesystem & cfs, char letter, bool fast) {
+            if (fast) {
+                cfs.Drives[letter].mapDriveFast();
+            } else {
+                cfs.Drives[letter].mapDrive();
+            }
+            done_mapping = true;
         }
-        else {
-            cfs.Drives[letter].mapDrive();
-        }
-		done_mapping = true;
-    }
+    }  // namespace
 
     void http_server(cfs::customFilesystem& cfs, int port) {
         crow::SimpleApp app;
-        CROW_ROUTE(app, "/init_disks")([&cfs]() { // Capture cfs by reference
+        CROW_ROUTE(app, "/init_disks")([&cfs]() {  // Capture cfs by reference
             utils::LOG("HTTP: /init_disks called");
             json response = json::parse(R"(
                 {
@@ -86,7 +92,7 @@ namespace http_server {
                 return crow::response(200, "done");
             }
 
-            float mapped_gb = min(cfs.Drives[drive_mapped].mapped_bytes.load() / (1024.0f * 1024.0f * 1024.0f), cfs.Drives[drive_mapped].getUsedSize() / 1024.0f);
+            float mapped_gb = std::min(cfs.Drives[drive_mapped].mapped_bytes.load() / (1024.0f * 1024.0f * 1024.0f), cfs.Drives[drive_mapped].getUsedSize() / 1024.0f);
             float progress = ((mapped_gb * 1024.0f) / cfs.Drives[drive_mapped].getUsedSize()) * 100;
             std::string progress_label = utils::cutPrecision(mapped_gb);
             progress_label += "/" + utils::cutPrecision(utils::MBtoGB(cfs.Drives[drive_mapped].getUsedSize())) + " GB";
@@ -102,11 +108,11 @@ namespace http_server {
         struct removed_file_info {
             std::string path;
             std::string size_label;
-            std::string type; // "file" or "folder"
+            std::string type;  // "file" or "folder"
         };
         std::vector<removed_file_info> removed_files;
-        float freed_space = 0.0f; // in MB
-        float space_to_free = 0.0f; // in MB
+        float freed_space = 0.0f;  // in MB
+        float space_to_free = 0.0f;  // in MB
 
         std::shared_ptr<cfs::File> current_dir;
 
@@ -116,7 +122,7 @@ namespace http_server {
                 return crow::response(400, "No drive mapped");
             }
 
-            if (current_dir == nullptr) { // first call
+            if (current_dir == nullptr) {  // first call
                 current_dir = cfs.Drives[drive_mapped].getRoot();
                 space_to_free = current_dir->size;
             }
@@ -220,4 +226,4 @@ namespace http_server {
 
         app.port(port).multithreaded().run();
 	}
-} // namespace http_server
+}  // namespace http_server
