@@ -10,6 +10,8 @@ Traditionally, checking the size of large directories (like `Program Files`) via
 
 **Get Space** solves this bottleneck. It maps your entire drive in seconds (utilizing advanced multithreading) and provides an instant, responsive overview of your disk space consumption. No more loading bars just to check folder sizes.
 
+*On my system, it took Windows around 120s to calculate everything on my `C:\` drive, 28 seconds to calculate `Users\`, and 20 seconds for `AppData\`. **Get Space analyzed my whole drive in 16 seconds. Once.***
+
 ## 🏗️ Architecture
 The application utilizes a decoupled architecture to separate heavy computation from the user interface:
 * **Backend Engine (C++)**: A highly optimized multithreaded scanner that bypasses native OS directory loading times. It utilizes **thread-local storage** and an **ultra-low contention** task queue to handle heavy lifting and maximize CPU throughput.
